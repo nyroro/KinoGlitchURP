@@ -33,7 +33,7 @@ public class AnalogGlitchVolume : VolumeComponent, IPostProcessComponent, IGlitc
 
     public bool IsTileCompatible() => false;
 
-    public void SetupGlitch(Material mat)
+    public void SetupGlitch(KinoGlitchPass renderPass, ScriptableRenderContext context, Material mat)
     {
         mat.SetVector(k_ScanLineJitterId, new Vector2(
             scanLineJitter.value,

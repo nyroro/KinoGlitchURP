@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -55,7 +56,8 @@ public class KinoGlitchPass : ScriptableRenderPass
             return;
         }
 
-        SetupMaterial<AnalogGlitchVolume>("Hidden/Kino/Glitch/Analog");
+        SetupMaterial<AnalogGlitchVolume>(context, "Hidden/Kino/Glitch/Analog");
+        SetupMaterial<DigitalGlitchVolume>(context, "Hidden/Kino/Glitch/Digital");
 
         var cmd = CommandBufferPool.Get(k_ProfilerTag);
         foreach (var mat in glitchMaterials.Values)
@@ -67,7 +69,15 @@ public class KinoGlitchPass : ScriptableRenderPass
         CommandBufferPool.Release(cmd);
     }
 
-    private void SetupMaterial<TVolume>(string shaderName) where TVolume : VolumeComponent, IPostProcessComponent, IGlitchVolume
+    public void BlitToRenderTexture(ScriptableRenderContext context, RenderTexture renderTexture)
+    {
+        var cmd = CommandBufferPool.Get(k_ProfilerTag);
+        Blit(cmd, src, renderTexture);
+        context.ExecuteCommandBuffer(cmd);
+        CommandBufferPool.Release(cmd);
+    }
+
+    private void SetupMaterial<TVolume>(ScriptableRenderContext context, string shaderName) where TVolume : VolumeComponent, IPostProcessComponent, IGlitchVolume
     {
         var stack = VolumeManager.instance.stack;
         var glitchVolume = stack.GetComponent<TVolume>();
@@ -93,7 +103,7 @@ public class KinoGlitchPass : ScriptableRenderPass
             glitchMat = CoreUtils.CreateEngineMaterial(shader);
             glitchMaterials[volumeTypeName] = glitchMat;
         }
-        glitchVolume.SetupGlitch(glitchMat);
+        glitchVolume.SetupGlitch(this, context, glitchMat);
     }
 
     public override void OnCameraCleanup(CommandBuffer cmd)

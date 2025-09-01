@@ -25,6 +25,7 @@ Shader "Hidden/Kino/Glitch/Digital"
     Properties
     {
         _MainTex  ("-", 2D) = "" {}
+        _Intensity ("Intensity", Float) = 1
         _NoiseTex ("-", 2D) = "" {}
         _TrashTex ("-", 2D) = "" {}
     }
