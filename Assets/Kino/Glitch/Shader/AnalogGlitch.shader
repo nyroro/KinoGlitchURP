@@ -25,6 +25,10 @@ Shader "Hidden/Kino/Glitch/Analog"
     Properties
     {
         _MainTex ("-", 2D) = "" {}
+        _ScanLineJitter("ScanLineJitter", Vector) = (1, 1, 1, 1)
+        _VerticalJump("VerticalJump", Vector) = (1, 1, 1, 1)
+        _HorizontalShake("HorizontalShake", Float) = 1
+        _ColorDrift("ColorDrift", Vector) = (1, 1, 1, 1)
     }
     CGINCLUDE
 
