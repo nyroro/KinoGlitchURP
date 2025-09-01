@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[System.Serializable, VolumeComponentMenu("Kino/Glitch/Digital")]
+[System.Serializable, VolumeComponentMenu("KinoGlitch/Digital")]
 public class DigitalGlitchVolume : VolumeComponent, IPostProcessComponent, IGlitchVolume
 {
     public static readonly int k_IntensityId = Shader.PropertyToID("_Intensity");
