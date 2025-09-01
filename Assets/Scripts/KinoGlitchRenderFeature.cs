@@ -35,6 +35,7 @@ public class KinoGlitchPass : ScriptableRenderPass
     private RenderTargetIdentifier src, dest;
 
     private Dictionary<string, Material> glitchMaterials = new Dictionary<string, Material>();
+    private Dictionary<string, IPostProcessComponent> glitchVolumes = new Dictionary<string, IPostProcessComponent>();
 
     public KinoGlitchPass()
     {
@@ -60,10 +61,14 @@ public class KinoGlitchPass : ScriptableRenderPass
         SetupMaterial<DigitalGlitchVolume>(context, "Hidden/Kino/Glitch/Digital");
 
         var cmd = CommandBufferPool.Get(k_ProfilerTag);
-        foreach (var mat in glitchMaterials.Values)
+        foreach (var item in glitchVolumes)
         {
-            Blit(cmd, src, dest, mat, 0);
-            Blit(cmd, dest, src);
+            if (item.Value != null && item.Value.IsActive())
+            {
+                var mat = glitchMaterials[item.Key];
+                Blit(cmd, src, dest, mat, 0);
+                Blit(cmd, dest, src);
+            }
         }
         context.ExecuteCommandBuffer(cmd);
         CommandBufferPool.Release(cmd);
@@ -87,6 +92,7 @@ public class KinoGlitchPass : ScriptableRenderPass
         }
 
         var volumeTypeName = typeof(TVolume).Name;
+        glitchVolumes[volumeTypeName] = glitchVolume;
         Material glitchMat;
         if (glitchMaterials.ContainsKey(volumeTypeName))
         {
